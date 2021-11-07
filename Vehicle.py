@@ -35,19 +35,21 @@ class Vehicle:
 		if isinstance(position,Point):
 			self.position = position
 		self.direction = Point(0,0)
-		self._CurrPos = Point(self.position.x,self.position.y)
+		self._CurrPos = position
 		self._vector = self.GetVector()
 		self._path = []
 		self.is_rec = False
 
-	def GetVector(self):
-		return Vector(self._CurrPos.x + self.direction.x,self._CurrPos.y + self.direction.y)
-
 	def move(self,n):
-		self._CurrPos += n
+		self.position = self._CurrPos
+		print(self.position.x,self.position.y,'<- position from move()')
+		self._CurrPos.x += self.direction.x * n
+		self._CurrPos.y += self.direction.y * n
+		print(self._CurrPos.x,self._CurrPos.y,'<- _CurrPos from move()')
 
 	def GetVector(self):
-		return (self._CurrPos.x + self.direction.x,self._CurrPos.y + self.direction.y)
+		print(self.position.x,self.position.y,'<- position from GetVector()')		
+		return Vector(self._CurrPos.x - self.position.x,self._CurrPos.y - self.position.y)
 		
 class Car(Vehicle):
 	def __init__(self,position,gas,gpu):
@@ -57,7 +59,7 @@ class Car(Vehicle):
 
 	def SetGas(self,n):
 		if isinstance(n, (int,float)):
-			if n > 0:
+			if n > self.GetGas():
 				self.__gas += n
 
 	def GetGas(self):
@@ -67,15 +69,21 @@ class Car(Vehicle):
 		return self.__gpu
 
 	def move(self,n):
-		if self.GetGas() / self.GetGPU() > 0 and self.GetGas() / self.GetGPU() >= n:
-			self.move(n)
+		if isinstance(n, (int,float)):
+			if self.GetGas() / self.GetGPU() >= self.direction.dist(self._CurrPos) * n: # GetGas() / GetGPU() - наш потенциал.
+				self.__gas = self.GetGas() - self.GetGPU() * self.direction.dist(self._CurrPos) * n
+				super(Car, self).move(n)
 
-Porshe = Car(Point(0,0),0,1/5)
+Porsche = Car(Point(0,0),0,1) # GPU = 1
 
-Porshe.SetGas(5)
+Porsche.SetGas(20) # Gas = 20
 
-print(Porshe.GetVector())
+print(Porsche.GetVector()) # Всегда (0,0).Это для контроля.
 
-Porshe.move(25)
+Porsche.direction = Vector(6,8) # Мы должны проехать 10.
 
-print(Porshe.GetVector())
+Porsche.move(2) # 2 раза
+
+print(Porsche.GetVector())
+
+print(Porsche.GetGas())
