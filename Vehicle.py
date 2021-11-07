@@ -1,3 +1,5 @@
+from copy import copy
+
 class Point:
 	def __init__(self,x,y):
 		self.x = x
@@ -41,14 +43,13 @@ class Vehicle:
 		self.is_rec = False
 
 	def move(self,n):
-		self.position = self._CurrPos
-		print(self.position.x,self.position.y,'<- position from move()')
+		self.position = copy(self._CurrPos)
 		self._CurrPos.x += self.direction.x * n
 		self._CurrPos.y += self.direction.y * n
-		print(self._CurrPos.x,self._CurrPos.y,'<- _CurrPos from move()')
+		if self.is_rec:
+			self._path.append(self.GetVector())
 
-	def GetVector(self):
-		print(self.position.x,self.position.y,'<- position from GetVector()')		
+	def GetVector(self):	
 		return Vector(self._CurrPos.x - self.position.x,self._CurrPos.y - self.position.y)
 		
 class Car(Vehicle):
@@ -60,7 +61,7 @@ class Car(Vehicle):
 	def SetGas(self,n):
 		if isinstance(n, (int,float)):
 			if n > self.GetGas():
-				self.__gas += n
+				self.__gas = n
 
 	def GetGas(self):
 		return self.__gas
@@ -68,22 +69,33 @@ class Car(Vehicle):
 	def GetGPU(self):
 		return self.__gpu
 
-	def move(self,n):
+	def move(self,n=1):
 		if isinstance(n, (int,float)):
 			if self.GetGas() / self.GetGPU() >= self.direction.dist(self._CurrPos) * n: # GetGas() / GetGPU() - наш потенциал.
 				self.__gas = self.GetGas() - self.GetGPU() * self.direction.dist(self._CurrPos) * n
 				super(Car, self).move(n)
 
-Porsche = Car(Point(0,0),0,1) # GPU = 1
+Porsche = Car(Point(0,0),0,1) # Gas Peer Unit = 1
 
-Porsche.SetGas(20) # Gas = 20
+Porsche.SetGas(20)
 
-print(Porsche.GetVector()) # Всегда (0,0).Это для контроля.
+Porsche.is_rec = True
 
-Porsche.direction = Vector(6,8) # Мы должны проехать 10.
+Porsche.direction = Vector(6,8)
 
-Porsche.move(2) # 2 раза
+Porsche.move(2)
 
-print(Porsche.GetVector())
+Porsche.SetGas(30)
 
-print(Porsche.GetGas())
+Porsche.direction = Vector(-6,-8)
+
+Porsche.move()
+
+Porsche.SetGas(1600)
+
+Porsche.direction = Vector(-6,8)
+
+Porsche.move(3)
+
+for i in range(0,len(Porsche._path)):
+	print('Vector №' + str(i + 1) + ':',Porsche._path[i])
