@@ -1,13 +1,13 @@
 class Text:
 	def __init__(self,stringList):
-		self.__textList = stringList,
+		self._textList = stringList,
 
 	def GetLen(self):
-		return len(self.__textList[0])
+		return len(self._textList[0])
 
 	def GetStr(self,n):
 		try:
-			return self.__textList[0][n - 1]
+			return self._textList[0][n - 1]
 		except:
 			print('Ошибка')
 
@@ -28,7 +28,32 @@ class Text:
 		except:
 			print('Ашипка!')
 
+class EditableText(Text):
+	def replaceStr(self,stringNum,string):
+		if isinstance(string, str):
+			try:
+				self._textList[0][stringNum - 1] = string
+			except:
+				print('Вы точно правильный номер строки ввели?')
 
+	def replaceWord(self,stringNum,wordNum,word):
+		self.replaceStr(stringNum,self.GetStr(stringNum).replace(self.GetStr(stringNum).split()[wordNum - 1],word))
 
-Text1 = Text(['Границы ключ переломлен пополам\n','А наш батюшка Ленин совсем усоп\n','Он разложился на плесень и на липовый мёд\n','А перестройка всё идёт и идёт по плану'])
-print(Text1.GetWord(2,4))
+	def __str__(self):
+		string = ' '
+		for i in range(self.GetLen()):
+			string += self.GetStr(i + 1) + ' '
+		return string
+
+	def GetWordPos(self,word):
+		wordsList = []
+		for i in range(self.GetLen()):
+			for x in range(len(self.GetStr(i + 1).split())):
+				wordsList.append(self.GetStr(i + 1).split()[x])
+		return wordsList.index(word) + 1
+
+Text1 = EditableText(['Границы ключ переломлен пополам\n','А наш батюшка Ленин совсем усоп\n','Он разложился на плесень и на липовый мёд\n','А перестройка всё идёт и идёт по плану'])
+
+Text1.replaceWord(2,4,'Вася')
+
+print(Text1.GetWordPos('Вася'))
