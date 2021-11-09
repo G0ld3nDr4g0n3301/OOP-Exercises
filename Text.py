@@ -54,6 +54,12 @@ class EditableText(Text):
 
 Text1 = EditableText(['Границы ключ переломлен пополам\n','А наш батюшка Ленин совсем усоп\n','Он разложился на плесень и на липовый мёд\n','А перестройка всё идёт и идёт по плану'])
 
+print(Text1.GetWord(2,4))
+
 Text1.replaceWord(2,4,'Вася')
 
+print(Text1.GetWordsNum(2))
+
 print(Text1.GetWordPos('Вася'))
+
+print(Text1)
