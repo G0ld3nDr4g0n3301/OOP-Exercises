@@ -6,10 +6,13 @@ class Text:
 		return len(self._textList[0])
 
 	def GetStr(self,n):
-		try:
-			return self._textList[0][n - 1]
-		except:
-			print('Ошибка')
+		if isinstance(n, int):
+			try:
+				return self._textList[0][n - 1]
+			except IndexError:
+				print('Индекс вне списка')
+		else:
+			raise TypeError
 
 	def GetWordsNum(self,n):
 		firstSplit = self.GetStr(n).split()
@@ -33,9 +36,11 @@ class EditableText(Text):
 		if isinstance(string, str):
 			try:
 				self._textList[0][stringNum - 1] = string
-			except:
+			except IndexError:
 				print('Вы точно правильный номер строки ввели?')
-
+		else:
+			raise TypeError
+			
 	def replaceWord(self,stringNum,wordNum,word):
 		self.replaceStr(stringNum,self.GetStr(stringNum).replace(self.GetStr(stringNum).split()[wordNum - 1],word))
 
