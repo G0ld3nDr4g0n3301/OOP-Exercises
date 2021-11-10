@@ -5,8 +5,11 @@ class Point:
 		self.x = x
 		self.y = y
 	def dist(self,other):
-		if isinstance(other,Point):
-			return ((self.x - other.x) ** 2 + (self.y - other.y) ** 2) ** 0.5
+		try:
+			if isinstance(other,Point):
+				return ((self.x - other.x) ** 2 + (self.y - other.y) ** 2) ** 0.5
+		except:
+			print('Error')
 
 class Vector(Point):
 	def length(self,other):
