@@ -58,8 +58,9 @@ class Vehicle:
 class Car(Vehicle):
 	def __init__(self,position,gas,gpu):
 		super().__init__(position)
-		self.__gas = gas
-		self.__gpu = gpu
+		if isinstance(gas,(int,float)) and isinstance(gpu,(int,float)):
+			self.__gas = gas
+			self.__gpu = gpu
 
 	def SetGas(self,n):
 		if isinstance(n, (int,float)):
@@ -75,7 +76,7 @@ class Car(Vehicle):
 	def move(self,n=1):
 		if isinstance(n, (int,float)):
 			if self.GetGas() / self.GetGPU() >= self.direction.dist(self._CurrPos) * n: # GetGas() / GetGPU() - наш потенциал.
-				self.__gas = self.GetGas() - self.GetGPU() * self.direction.dist(self._CurrPos) * n
+				self.__gas = self.GetGas() - self.GetGPU() * self.direction.dist(self._CurrPos) * n #Знаю,знаю,не этично...Ничего не могу поделать.Через сеттер не получится((((
 				super(Car, self).move(n)
 
 Porsche = Car(Point(0,0),0,1) # Gas Peer Unit = 1
