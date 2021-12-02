@@ -7,7 +7,7 @@ class BasePokemon:
 	def __str__(self):
 		return f'Name = {self._name}'.format()
 
-
+		
 
 class Pokemon(BasePokemon):
 
@@ -35,8 +35,9 @@ class PokeAPI:
 
 	def get_all(get_full=False):
 		if get_full:
-			pass
+			for i in PokeAPI.get_pokemon(''):
+				yield PokeAPI.get_pokemon(i)
 		else:
-			yield [BasePokemon(i) for i in PokeAPI.get_pokemon('')]
+			return [BasePokemon(i) for i in PokeAPI.get_pokemon('')]
 
-print([PokeAPI.get_all()])
+print(PokeAPI.get_all())
