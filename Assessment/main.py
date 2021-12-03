@@ -20,6 +20,9 @@ class Pokemon(BasePokemon):
 	def __str__(self):
 		return f'ID = {self.__id}\nName = {self._name}\nHeight = {self.__height}\nWeight = {self.__weight}'.format()
 
+	def __gt__(self,other):
+		return self.__weight > other.__weight
+
 
 
 class PokeAPI:
@@ -47,6 +50,15 @@ class PokeAPI:
 				yield BasePokemon(i)
 
 
-for i in PokeAPI.get_all():
-	print('------------------------------')
-	print(i)
+print(PokeAPI.get_pokemon('ditto'))
+
+
+print('*******************************')
+
+first50 = PokeAPI.get_all(True)
+weightList = []
+
+for i in range(50):
+	weightList.append(next(first50))
+
+print(max(weightList))
