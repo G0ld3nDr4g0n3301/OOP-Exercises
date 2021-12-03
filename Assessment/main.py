@@ -7,7 +7,7 @@ class BasePokemon:
 	def __str__(self):
 		return f'Name = {self._name}'.format()
 
-		
+
 
 class Pokemon(BasePokemon):
 
@@ -28,7 +28,7 @@ class PokeAPI:
 		req = requests.get('https://pokeapi.co/api/v2/pokemon/' + str(Info))
 		lst = req.json()
 		if Info == '':
-			namelist = [lst['results'][i]['name'] for i in lst['results']]
+			namelist = [lst['results'][i]['name'] for i in range(20)]
 			return namelist
 		else:
 			return Pokemon(lst['id'],lst['name'],lst['height'],lst['weight'])
@@ -38,6 +38,9 @@ class PokeAPI:
 			for i in PokeAPI.get_pokemon(''):
 				yield PokeAPI.get_pokemon(i)
 		else:
-			return [BasePokemon(i) for i in PokeAPI.get_pokemon('')]
+			for i in PokeAPI.get_pokemon(''):
+				yield BasePokemon(i)
 
-print(PokeAPI.get_all())
+
+for i in PokeAPI.get_all():
+	print(i)
