@@ -1,5 +1,5 @@
 import requests
-from typing import Union
+from typing import Union, Iterator
 
 class BasePokemon:
 	name: str
@@ -28,14 +28,14 @@ class Pokemon(BasePokemon):
 	def __str__(self) -> str:
 		return f'ID = {self.__id}\nName = {self._name}\nHeight = {self.__height}\nWeight = {self.__weight}'.format()
 
-	def __gt__(self,other: Pokemon) -> bool:
+	def __gt__(self,other) -> bool: # Я пытался указать тут Pokemon для other,но не получилось,извините.
 		return self.__weight > other.__weight
 
 
 
 class PokeAPI:
 
-	def get_pokemon(Info='': str) -> Union(list,Pokemon):
+	def get_pokemon(Info: str ='') -> Union[list,Pokemon]:
 		req = requests.get('https://pokeapi.co/api/v2/pokemon/' + str(Info))
 		lst: list = req.json()
 		if Info == '':
@@ -49,7 +49,7 @@ class PokeAPI:
 		else:
 			return Pokemon(lst['id'],lst['name'],lst['height'],lst['weight'])
 
-	def get_all(get_full=False: bool):             #Как аннотировать генераторы???
+	def get_all(get_full: bool = False): # Генератор аннотировать тоже не получилось без аргументов.
 		if get_full:
 			for i in PokeAPI.get_pokemon(''):
 				yield PokeAPI.get_pokemon(i)
@@ -63,7 +63,7 @@ print(PokeAPI.get_pokemon('ditto'))
 
 print('*******************************')
 
-first50 = PokeAPI.get_all(True)
+first50: Iterator = PokeAPI.get_all(True)
 weightList: list = []
 
 for i in range(50):
