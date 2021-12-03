@@ -24,11 +24,16 @@ class Pokemon(BasePokemon):
 
 class PokeAPI:
 
-	def get_pokemon(Info):
+	def get_pokemon(Info=''):
 		req = requests.get('https://pokeapi.co/api/v2/pokemon/' + str(Info))
 		lst = req.json()
 		if Info == '':
-			namelist = [lst['results'][i]['name'] for i in range(20)]
+			while len(lst['results']) != lst['count']:
+				new = requests.get(lst['next']).json()
+				lst['next'] = new['next']
+				for i in new['results']:
+					lst['results'].append(i)
+			namelist = [lst['results'][i]['name'] for i in range(lst['count'])]
 			return namelist
 		else:
 			return Pokemon(lst['id'],lst['name'],lst['height'],lst['weight'])
@@ -43,4 +48,5 @@ class PokeAPI:
 
 
 for i in PokeAPI.get_all():
+	print('------------------------------')
 	print(i)
