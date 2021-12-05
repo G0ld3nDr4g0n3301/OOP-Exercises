@@ -13,6 +13,18 @@ class BasePokemon:
 	def __str__(self) -> str:
 		return f'Name = {self._name}'.format()
 
+@dataclass(repr = False,eq = False,frozen = True)
+class PokemonStats:
+	hp: int
+	attack: int
+	defense: int
+	special_attack: int
+	special_defense: int
+	speed: int
+
+	def __str__(self) -> str:
+		return f'hp = {self.hp}\nattack = {self.attack}\ndefense = {self.defense}\nspecial_attack = {self.special_attack}\nspecial_defense = {self.special_defense}\nspeed = {self.speed}\n'.format()
+
 
 @dataclass(repr = False,eq = False,frozen=True)
 class Pokemon(BasePokemon):
@@ -20,12 +32,16 @@ class Pokemon(BasePokemon):
 	name: str
 	height: int
 	weight: int
+	stats: PokemonStats
 
 	def __str__(self) -> str:
-		return f'ID = {self.id}\nName = {self.name}\nHeight = {self.height}\nWeight = {self.weight}'.format()
+		return f'ID = {self.id}\nName = {self.name}\nHeight = {self.height}\nWeight = {self.weight}\nStats = \n{self.stats}'.format()
 
 	def __gt__(self,other) -> bool: # Я пытался указать тут Pokemon для other,но не получилось,извините.
 		return self.weight > other.weight
+
+
+
 
 
 class PokeAPI:
@@ -58,8 +74,15 @@ class PokeAPI:
 			PokeAPI.PokeCacheDict[Info] = namelist
 			return namelist
 		else:
+			StatsList = {'hp': lst['stats'][0]['base_stat'],
+			'attack': lst['stats'][1]['base_stat'],
+			'defense': lst['stats'][2]['base_stat'],
+			'special_attack': lst['stats'][3]['base_stat'],
+			'special_defense': lst['stats'][4]['base_stat'],
+			'speed': lst['stats'][5]['base_stat']
+			}
 			try:
-				PokeAPI.PokeCacheDict[Info] = Pokemon(lst['id'],lst['name'],lst['height'],lst['weight'])
+				PokeAPI.PokeCacheDict[Info] = Pokemon(lst['id'],lst['name'],lst['height'],lst['weight'],stats = PokemonStats(**StatsList))
 			except:
 				raise PokeError('You can only load one pokemon(or all of them)')
 			return PokeAPI.PokeCacheDict[Info]
