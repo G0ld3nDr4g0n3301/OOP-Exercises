@@ -1,39 +1,31 @@
 import requests
 from typing import Union, Iterator
 from json.decoder import JSONDecodeError
+from dataclasses import dataclass
 
 class PokeError(Exception):
 	pass
 
+@dataclass(repr = False,eq = False,frozen = True)
 class BasePokemon:
 	name: str
-
-	def __init__(self,name: str) -> None:
-		self._name = name
 
 	def __str__(self) -> str:
 		return f'Name = {self._name}'.format()
 
 
-
+@dataclass(repr = False,eq = False,frozen=True)
 class Pokemon(BasePokemon):
 	id: int
 	name: str
 	height: int
 	weight: int
 
-
-	def __init__(self,id: int,name: str,height: int,weight: int) -> None:
-		super().__init__(name)
-		self.__id = id
-		self.__height = height
-		self.__weight = weight
-
 	def __str__(self) -> str:
-		return f'ID = {self.__id}\nName = {self._name}\nHeight = {self.__height}\nWeight = {self.__weight}'.format()
+		return f'ID = {self.id}\nName = {self.name}\nHeight = {self.height}\nWeight = {self.weight}'.format()
 
 	def __gt__(self,other) -> bool: # Я пытался указать тут Pokemon для other,но не получилось,извините.
-		return self.__weight > other.__weight
+		return self.weight > other.weight
 
 
 class PokeAPI:
