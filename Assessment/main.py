@@ -36,10 +36,16 @@ class Pokemon(BasePokemon):
 		return self.__weight > other.__weight
 
 
-
 class PokeAPI:
 
+	PokeCacheDict: dict = {}
+
 	def get_pokemon(Info: str ='') -> Union[list,Pokemon]:
+		if Info in PokeAPI.PokeCacheDict.keys():
+			print('**************')
+			print('Loading Cache')
+			print('**************')
+			return PokeAPI.PokeCacheDict[Info]
 		try:
 			req = requests.get('https://pokeapi.co/api/v2/pokemon/' + str(Info))
 		except:
@@ -57,9 +63,14 @@ class PokeAPI:
 				for i in new['results']:
 					lst['results'].append(i)
 			namelist: list = [lst['results'][i]['name'] for i in range(lst['count'])]
+			PokeAPI.PokeCacheDict[Info] = namelist
 			return namelist
 		else:
-			return Pokemon(lst['id'],lst['name'],lst['height'],lst['weight'])
+			try:
+				PokeAPI.PokeCacheDict[Info] = Pokemon(lst['id'],lst['name'],lst['height'],lst['weight'])
+			except:
+				raise PokeError('You can only load one pokemon(or all of them)')
+			return PokeAPI.PokeCacheDict[Info]
 
 	def get_all(get_full: bool = False): # Генератор аннотировать тоже не получилось без аргументов.
 		if get_full:
@@ -68,6 +79,10 @@ class PokeAPI:
 		else:
 			for i in PokeAPI.get_pokemon(''):
 				yield BasePokemon(i)
+
+
+
+
 
 
 print(PokeAPI.get_pokemon('ditto'))
@@ -82,3 +97,22 @@ for i in range(50):
 	weightList.append(next(first50))
 
 print(max(weightList))
+
+'''
+
+# Test for cache
+
+print(PokeAPI.get_pokemon('ditto'))
+
+itr = PokeAPI.get_all(True)
+
+for i in range(55):
+	print(next(itr))
+
+itr = PokeAPI.get_all(True)
+
+for i in range(55):
+	print(next(itr))
+print(PokeAPI.get_pokemon('ditto'))
+
+'''
