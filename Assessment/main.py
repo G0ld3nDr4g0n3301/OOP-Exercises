@@ -1,5 +1,9 @@
 import requests
 from typing import Union, Iterator
+from json.decoder import JSONDecodeError
+
+class PokeError(Exception):
+	pass
 
 class BasePokemon:
 	name: str
@@ -36,8 +40,16 @@ class Pokemon(BasePokemon):
 class PokeAPI:
 
 	def get_pokemon(Info: str ='') -> Union[list,Pokemon]:
-		req = requests.get('https://pokeapi.co/api/v2/pokemon/' + str(Info))
-		lst: list = req.json()
+		try:
+			req = requests.get('https://pokeapi.co/api/v2/pokemon/' + str(Info))
+		except:
+			raise PokeError('Bad c....ect..n...pshhhhhhhh......')
+		if req.status_code == 404:
+			raise PokeError('Pokemon not found!')
+		try:
+			lst: list = req.json()
+		except JSONDecodeError:
+			raise PokeError('Something\'s wrong with your JSON...')
 		if Info == '':
 			while len(lst['results']) != lst['count']:
 				new = requests.get(lst['next']).json()
